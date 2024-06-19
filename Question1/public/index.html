@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Top Products HTTP MicroServices Products </title>
+</head>
+<body>
+    <div>
+        <label> Select Company </label>
+        <select id="Selectcomapny"> 
+            <option value="AMZ"> AMZ </option>
+            <option value="FLP"> FLP </option>
+            <option value="SNP"> SNP </option>
+            <option value="MYN"> MYN </option>
+            <option value="AZO"> AZO </option>
+        </select>
+    </div>
+    <div>
+        <label> Select Categories </label>
+        <select id="Selectcategories">
+            <option value="Phone">Phone</option>
+            <option value="Computer">Computer</option>
+            <option value="TV">TV</option>
+            <option value="Earphone">Earphone</option>
+            <option value="Tablet">Tablet</option>
+            <option value="Charger">Charger</option>
+            <option value="Mouse">Mouse</option>
+            <option value="Keypad">Keypad</option>
+            <option value="Bluetooth">Bluetooth</option>
+            <option value="Pendrive">Pendrive</option>
+            <option value="Remote"> Remote </option>
+            <option value="Speaker"> Speaker </option>
+            <option value="Headset"> Headset </option>
+            <option value="Laptop"> Laptop </option>
+            <option value="PC"> PC </option>
+        </select>
+    </div>
+    <div>
+        <label> Enter how many items you want </label><br/>
+        <input type="text" id="Input" placeholder=" eg: 10 "/>
+    </div>
+    <div>
+        <h1> Enter Prices Ranges </h1>
+        <labe> Minimum Price </labe><br/>
+        <input type="text" id="MinPrice"/><br/><br/>
+        <label> Maximum Price </label>
+        <input type="text" id="MaxPrice"/>
+        <div>
+            <button id="submit"> Submit </button>
+        </div>
+    </div>
+    <div id="Response">
+        
+    </div>
+    <script>
+
+        let comapny='AMZ';
+        let categories='Phone'
+        let topParameter=null;
+        let minPrice=null;
+        let maxPrice=null;
+
+        let submitId=document.getElementById('submit');
+        submitId.addEventListener('click',()=>{
+            console.log('clicked')
+            document.getElementById('Selectcomapny').addEventListener('change',(e)=>{
+            comapny=(e.target.value);
+            })
+            document.getElementById('Selectcategories').addEventListener('change',function(e){
+                categories=e.target.value;
+            })
+            if(parseInt(document.getElementById('Input').value)<=10){
+             topParameter=document.getElementById('Input').value;
+             minPrice=document.getElementById('MinPrice').value;
+             maxPrice=document.getElementById('MaxPrice').value;
+            }else{
+                alert('data is exceded give upto 10 values only');
+            }
+            //console.log(comapny,categories,topParameter,minPrice,maxPrice);
+            let url=`http://20.244.56.144/test/companies/${comapny}/categories/${categories}/products?top=${topParameter}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
+            let token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJNYXBDbGFpbXMiOnsiZXhwIjoxNzE4NzgzMzc1LCJpYXQiOjE3MTg3ODMwNzUsImlzcyI6IkFmZm9yZG1lZCIsImp0aSI6Ijk4NmZjOGQzLTBkNGMtNDA2OS05N2RhLWIyNjU2MjZhZmJhNSIsInN1YiI6IjIxMDMwNDEyNDA3N0BwYXJ1bHVuaXZlcnNpdHkuYWMuaW4ifSwiY29tcGFueU5hbWUiOiJQYXJ1bFVuaXZlcnNpdHkiLCJjbGllbnRJRCI6Ijk4NmZjOGQzLTBkNGMtNDA2OS05N2RhLWIyNjU2MjZhZmJhNSIsImNsaWVudFNlY3JldCI6InVnU0Z0YWdkZFp6eXpzTVMiLCJvd25lck5hbWUiOiJNSVRUQVBBTExJIEdPUElTQUlQUkFNT0QiLCJvd25lckVtYWlsIjoiMjEwMzA0MTI0MDc3QHBhcnVsdW5pdmVyc2l0eS5hYy5pbiIsInJvbGxObyI6IjIxMDMwNDEyNDA3NyJ9.VZ0X1mcZdN_kFk8sSNvdnmGo5Ewig4-dbTDAT2P-lWs';
+            let option={
+                method:'GET',
+                headers:{
+                    'Authorization':`Bearer ${token}`
+                }
+            }; 
+            fetch(url,option)
+            .then(function(response){
+                return response.json();
+            })
+            .then(function(jsonData){
+                jsonData.sort((a, b) => b.rating - a.rating);
+
+
+                // Display sorted data
+                jsonData.forEach(product => {
+                    let productDiv = document.createElement('div');
+                    productDiv.textContent = `${product.productName} - Price: ${product.price} - Rating: ${product.rating} - Discount:${product.discount} - Availability:${product.availability}`;
+                    document.getElementById('Response').appendChild(productDiv)
+                })
+            })
+        });
+    </script>
+</body>
+</html>
